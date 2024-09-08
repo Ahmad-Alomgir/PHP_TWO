@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $gender = $_POST['gender'];
     $height = floatval($_POST['height']); // Convert to float
     $weight = floatval($_POST['weight']); // Convert to float
+    $country = $_POST['country'];
 
     // Validate age
     if ($age <= 0) {
@@ -22,17 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $bmi = $weight / (($height / 100) ** 2);
 
     // Insert into BMIUsers table
-    $stmt = $conn->prepare("INSERT INTO BMIUsers (Name, Age, Gender) VALUES (?, ?, ?)");
-    $stmt->bind_param("sis", $name, $age, $gender);
-    $stmt->execute();
-    $bmi_user_id = $stmt->insert_id;
-    $stmt->close();
+   // Insert into BMIUsers table
+$stmt = $conn->prepare("INSERT INTO BMIUsers (Name, Age, Gender, country) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("siss", $name, $age, $gender, $country);
+$stmt->execute();
+$bmi_user_id = $stmt->insert_id;
+$stmt->close();
 
-    // Insert into BMIRecords table
-    $stmt = $conn->prepare("INSERT INTO BMIRecords (BMIUserID, Height, Weight, BMI) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("iddd", $bmi_user_id, $height, $weight, $bmi);
-    $stmt->execute();
-    $stmt->close();
+// Insert into BMIRecords table
+$stmt = $conn->prepare("INSERT INTO BMIRecords (BMIUserID, Height, Weight, country, BMI) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param("iddsd", $bmi_user_id, $height, $weight, $country, $bmi);  // Updated with "s" for country (string)
+$stmt->execute();
+$stmt->close();
+
 
     // Redirect to the results page
     header("Location: ./bmi_results.php?id=" . $bmi_user_id);
@@ -65,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </select>
             <input type="number" step="any" name="height" placeholder="Height in cm" class="border rounded p-2 mb-2 w-full" required min="1">
             <input type="number" step="any" name="weight" placeholder="Weight in kg" class="border rounded p-2 mb-2 w-full" required min="1">
+            <input type="text" step="any" name="country" placeholder="Country" class="border rounded p-2 mb-2 w-full" required >
             <div class="flex justify-center mt-4">
                 <button type="submit" class="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded">
                     Calculate BMI

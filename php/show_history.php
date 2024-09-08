@@ -19,6 +19,7 @@ $sql = "
         BMIUsers.Gender,
         BMIRecords.Height,
         BMIRecords.Weight,
+        BMIRecords.country,
         BMIRecords.BMI,
         BMIRecords.RecordedAt
     FROM BMIUsers
@@ -39,49 +40,91 @@ $bmi_records = $result->fetch_all(MYSQLI_ASSOC);
     <style>
         body {
             font-family: 'Roboto', sans-serif;
+            background-color: #f3f4f6; /* Light gray background for the body */
+        }
+        h1 {
+            font-size: 1.75rem;
+            color: #1a202c; /* Darker color for the title */
+        }
+        table {
+            border-collapse: collapse;
+        }
+        table th, table td {
+            padding: 16px;
+        }
+        table th {
+            background-color: #f9fafb; /* Light gray for table header */
+            color: #374151; /* Darker gray for header text */
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f1f5f9; /* Alternate row background color */
+        }
+        table tbody tr:hover {
+            background-color: #e2e8f0; /* Hover effect on table rows */
+        }
+        .container {
+            max-width: 800px; /* Width control for the container */
+        }
+        .btn-primary {
+            background-color: #2563eb;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-danger {
+            background-color: #ef4444;
+            transition: background-color 0.3s ease;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
         }
     </style>
-    <title>Show History</title>
+    <title>User BMI History</title>
 </head>
 <body class="bg-gray-100">
-    <div class="container mx-auto p-5 max-w-4xl bg-white shadow-md rounded-lg">
-        <h1 class="text-xl font-bold text-center mb-4">User BMI History</h1>
+    <div class="container mx-auto p-6 mt-8 bg-white shadow-lg rounded-lg">
+        <h1 class="text-2xl font-bold text-center mb-6">User BMI History</h1>
 
         <?php if ($bmi_records): ?>
-            <table class="min-w-full divide-y divide-gray-200 mb-6">
-                <thead class="bg-gray-50">
+            <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden shadow-md">
+                <thead class="bg-gray-100">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Name</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Height</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Weight</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">BMI</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recorded At</th>
+                        <th class="text-left text-sm font-semibold text-gray-600">User Name</th>
+                        <th class="text-left text-sm font-semibold text-gray-600">Age</th>
+                        <th class="text-left text-sm font-semibold text-gray-600">Gender</th>
+                        <th class="text-left text-sm font-semibold text-gray-600">Height (cm)</th>
+                        <th class="text-left text-sm font-semibold text-gray-600">Weight (kg)</th>
+                        <th class="text-left text-sm font-semibold text-gray-600">BMI</th>
+                        <th class="text-left text-sm font-semibold text-gray-600">Country</th>
+                        <th class="text-left text-sm font-semibold text-gray-600">Recorded At</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-gray-300">
                     <?php foreach ($bmi_records as $record): ?>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><?php echo htmlspecialchars($record['UserName']); ?></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo htmlspecialchars($record['Age']); ?></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo htmlspecialchars($record['Gender']); ?></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo htmlspecialchars($record['Height']); ?> cm</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo htmlspecialchars($record['Weight']); ?> kg</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo htmlspecialchars(number_format($record['BMI'], 2)); ?></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo htmlspecialchars($record['RecordedAt']); ?></td>
+                        <tr class="hover:bg-gray-100 transition-colors duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"><?php echo htmlspecialchars($record['UserName']); ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo htmlspecialchars($record['Age']); ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo htmlspecialchars($record['Gender']); ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo htmlspecialchars($record['Height']); ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo htmlspecialchars($record['Weight']); ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 font-bold"><?php echo htmlspecialchars(number_format($record['BMI'], 2)); ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo htmlspecialchars($record['country']); ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo htmlspecialchars($record['RecordedAt']); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         <?php else: ?>
-            <p class="text-center text-gray-500 mt-4">No BMI records found.</p>
+            <p class="text-center text-gray-600 mt-4">No BMI records found.</p>
         <?php endif; ?>
 
-        <div class="flex justify-between mt-4">
-            <a href="bmi_calculator.php" class="text-blue-500 hover:underline">Go back to Calculator</a>
+        <div class="flex justify-between mt-8">
+            <a href="bmi_calculator.php" class="btn-primary text-white font-bold py-2 px-4 rounded shadow-md hover:shadow-lg focus:outline-none focus:shadow-outline">
+                Go back to Calculator
+            </a>
             <form method="POST" action="logout.php">
-                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold px-4 py-2 rounded focus:outline-none focus:shadow-outline">
+                <button type="submit" class="btn-danger text-white font-bold py-2 px-4 rounded shadow-md hover:shadow-lg focus:outline-none focus:shadow-outline">
                     Logout
                 </button>
             </form>
